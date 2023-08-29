@@ -79,7 +79,7 @@ flutter:
   fonts:
     - family: Raleway
       fonts:
-        - asset: assets/fonts/raleway.ttf
+        - asset: assets/fonts/raleway_regular.ttf
         - asset: assets/fonts/raleway_semi_bold.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see

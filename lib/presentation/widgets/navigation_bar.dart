@@ -25,11 +25,7 @@ class RepoNavigationBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       title: Text(
         title,
-        style: const TextStyle(
-          fontFamily: 'Raleway',
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-        ),
+        style: Theme.of(context).textTheme.titleMedium,
       ),
       leadingWidth: 90,
       leading: isChildScreen

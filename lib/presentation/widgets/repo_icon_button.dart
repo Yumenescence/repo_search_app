@@ -18,7 +18,7 @@ class RepoIconButton extends StatelessWidget {
     return Center(
       child: Container(
         decoration: BoxDecoration(
-          color: const Color.fromRGBO(20, 99, 245, 1),
+          color: Theme.of(context).primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         constraints: const BoxConstraints.tightFor(width: 44.0, height: 44.0),
