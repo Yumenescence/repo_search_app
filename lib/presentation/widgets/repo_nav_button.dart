@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class RepoIconButton extends StatelessWidget {
-  const RepoIconButton({
+class RepoNavButton extends StatelessWidget {
+  const RepoNavButton({
     super.key,
     required this.iconAssetName,
     required this.onPressed,
-    this.isFavorite = false,
   });
 
   final String iconAssetName;
   final VoidCallback onPressed;
-  final bool isFavorite;
 
   @override
   Widget build(BuildContext context) {

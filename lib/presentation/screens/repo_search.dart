@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:repo_search_app/presentation/widgets/repo_input_decor.dart';
+import 'package:repo_search_app/presentation/widgets/repo_input_field.dart';
 import 'package:repo_search_app/provider/repo_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/navigation_bar.dart';
+import '../widgets/repo_app_bar.dart';
 import '../widgets/repo_card.dart';
 
 class RepoSearchScreen extends StatelessWidget {
@@ -14,15 +14,18 @@ class RepoSearchScreen extends StatelessWidget {
     final foundRepos = context.read<RepoProvider>().repos;
     final isLoading = context
         .select<RepoProvider, bool>((provider) => provider.isLoadingRepos);
-    final controller = context.select<RepoProvider, TextEditingController>(
-        (provider) => provider.searchController);
+
+    // fix title text
     final titleText =
         context.select<RepoProvider, String>((provider) => provider.titleText);
     final bodyText =
         context.select<RepoProvider, String?>((provider) => provider.bodyText);
 
     return Scaffold(
-      appBar: const RepoNavigationBar(title: 'Github repos list'),
+      appBar: const RepoAppBar(
+        title: 'Github repos list',
+        showFavoritesButton: true,
+      ),
       body: Column(
         children: [
           Padding(
@@ -32,11 +35,11 @@ class RepoSearchScreen extends StatelessWidget {
                 children: [
                   Builder(builder: (context) {
                     return RepoInputField(
-                        controller: controller,
-                        onPressed: () async {
-                          await context
+                        initialValue: '',
+                        onSubmit: (value) {
+                          context
                               .read<RepoProvider>()
-                              .searchRepositories();
+                              .searchRepositories(value);
                         });
                   }),
                   const SizedBox(height: 16),
@@ -77,7 +80,7 @@ class RepoSearchScreen extends StatelessWidget {
                           reposName: foundRepos[index],
                           onPressed: () => context
                               .read<RepoProvider>()
-                              .updateFavoritesAndNotify(foundRepos[index]),
+                              .toggleFavoriteStateForRepo(foundRepos[index]),
                         );
                       },
                     );

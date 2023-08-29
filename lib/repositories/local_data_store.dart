@@ -1,33 +1,43 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LocalDataStore {
-  final SharedPreferences prefs;
+const favoritesKey = 'favorites';
+const searchHistoryKey = 'search_results';
 
-  LocalDataStore(this.prefs);
+class LocalDataStore {
+  late final Future<SharedPreferences> _prefsPromise;
+
+  late final SharedPreferences _prefInstance;
+
+  LocalDataStore(this._prefsPromise);
+
+  init() async {
+    _prefInstance = await _prefsPromise;
+  }
 
   Future<void> addFavorite(String favorite) async {
-    final favorites = prefs.getStringList('favorites') ?? [];
+    final favorites = await getFavorites();
     favorites.add(favorite);
-    await prefs.setStringList('favorites', favorites);
+    await _prefInstance.setStringList(favoritesKey, favorites);
   }
 
   Future<void> removeFavorite(String name) async {
-    final favorites = prefs.getStringList('favorites') ?? [];
-    favorites.removeWhere((favorite) => favorite.contains(name));
-    await prefs.setStringList('favorites', favorites);
+    final favorites = await getFavorites();
+    favorites.removeWhere((favorite) => favorite == name);
+    await _prefInstance.setStringList(favoritesKey, favorites);
   }
 
-  List<String> getFavorites() {
-    final favorites = prefs.getStringList('favorites') ?? [];
-    return favorites;
+  Future<List<String>> getFavorites() async {
+    final List<String> favorites =
+        _prefInstance.getStringList(favoritesKey) ?? [];
+    return Future.value(favorites);
   }
 
   Future<void> saveSearchResults(List<String> results) async {
-    await prefs.setStringList('search_results', results);
+    await _prefInstance.setStringList(searchHistoryKey, results);
   }
 
-  List<String> getSearchResults() {
-    final searchResults = prefs.getStringList('search_results') ?? [];
+  Future<List<String>> getSearchResults() async {
+    final searchResults = _prefInstance.getStringList(searchHistoryKey) ?? [];
     return searchResults;
   }
 }
