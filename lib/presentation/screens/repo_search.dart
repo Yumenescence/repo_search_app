@@ -2,24 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:repo_search_app/provider/repo_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/navigation_bar.dart';
+
 class RepoSearchScreen extends StatelessWidget {
   const RepoSearchScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) {
-        final state = RepoProvider();
-        state.initialize();
-        return state;
-      },
-      child: const _Screen(),
-    );
-  }
-}
-
-class _Screen extends StatelessWidget {
-  const _Screen();
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +13,7 @@ class _Screen extends StatelessWidget {
     final isLoading =
         context.select<RepoProvider, bool>((provider) => provider.isLoading);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('GitHub Repo Search'),
-      ),
+      appBar: const RepoNavigationBar(title: 'Github repos list'),
       body: Column(
         children: [
           Padding(
@@ -68,7 +52,7 @@ class _Screen extends StatelessWidget {
                                     : Colors.green),
                             onPressed: () => context
                                 .read<RepoProvider>()
-                                .updateFavoritesAndNotify(repos[index]));
+                                .updateFavoritesAndNotify(repos[index].name));
                       },
                     ),
                   );

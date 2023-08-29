@@ -1,18 +1,11 @@
-import 'unique.dart';
-
-class RepoModel extends Unique {
+class RepoModel {
   final String name;
 
-  RepoModel(super.id, {required this.name});
+  RepoModel({required this.name});
 
-  RepoModel.fromJson(Map<String, dynamic> json)
-      : name = json['full_name'],
-        super(json['id']);
+  RepoModel.fromJson(Map<String, dynamic> json) : name = json['full_name'];
 
   Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'id': id,
-    };
+    return {'name': name};
   }
 }

@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api/github_repository_api.dart';
 import '../models/repo.dart';
 import '../repositories/local_data_store.dart';
 
 class RepoProvider extends ChangeNotifier {
-  late LocalDataStore _database;
   final TextEditingController _searchController = TextEditingController();
   List<RepoModel> _repos = [];
-  final Set<String> _favorites = {};
+  Set<String> _favorites = {};
   bool _isLoading = false;
+  late LocalDataStore _localDataStore;
 
   RepoProvider();
 
   TextEditingController get searchController => _searchController;
+  LocalDataStore get localDataStore => _localDataStore;
   List<RepoModel> get repos => _repos;
   Set<String> get favorites => _favorites;
   bool get isLoading => _isLoading;
 
   Future<void> initialize() async {
-    _database = await initializeDatabase();
-    final favorites = await _database.getFavorites();
-    _favorites.addAll(favorites.map((e) => RepoModel.fromJson(e.value).name));
+    final prefs = await SharedPreferences.getInstance();
+    _localDataStore = LocalDataStore(prefs);
+    final favorites = _localDataStore.getFavorites();
+    _favorites.addAll(favorites);
     notifyListeners();
   }
 
@@ -35,16 +38,19 @@ class RepoProvider extends ChangeNotifier {
     return await getRepositoriesByName(_searchController.text);
   }
 
-  void updateFavoritesAndNotify(RepoModel favorite) async {
-    bool isFavoriteExists = _favorites.contains(favorite.name);
+  void updateFavoritesAndNotify(String favorite) async {
+    bool isFavoriteExists = _favorites.contains(favorite);
 
     if (isFavoriteExists) {
-      _favorites.remove(favorite.name);
-      await _database.removeFavorite(favorite.id);
+      favorites.remove(favorite);
+      await localDataStore.removeFavorite(favorite);
     } else {
-      _favorites.add(favorite.name);
-      await _database.addFavorite(favorite.toJson());
+      favorites.add(favorite);
+      await localDataStore.addFavorite(favorite);
     }
+
+    _favorites = Set<String>.from(favorites);
+
     notifyListeners();
   }
 
